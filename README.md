@@ -1,10 +1,10 @@
-# Introdução a Redes de Computadores
+# Instalação e Configuração de servidores
 
 Por: Thiago Guimarães Tavares
 
 thiagogmta@gmail.com
 
-> Um livro sobre introdução a Redes de Computadores
+> Um livro sobre Instalação e Configuração de Servidores
 
 ## Sobre esse projeto:
 
