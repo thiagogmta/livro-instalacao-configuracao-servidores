@@ -1,0 +1,203 @@
+== Servidor FTP
+Prof. Thiago Guimarães Tavares - thiagogmta@gmail.com
+IFTO Campus Palmas
+
+:cap: cap6-ftp
+
+.Objetivos do capítulo
+____________________
+Ao final deste capítulo você deverá ser capaz de:
+
+* Entender o que é e para que serve um servidor FTP.
+* Realizar a configuração básica inicial de um servidor FTP
+* Realizar acesso ao servidor FTP através dos clientes
+____________________
+
+=== Apresentação
+
+*O que é?*
+
+FTP significa File Transfer Protocol (Protocolo de Transferência de Arquivos) e é uma forma rápida e versátil para transferência de arquivos.
+
+*Para que serve?*
+
+Serve para o estabelecimento de conexões entre hosts para transferência de arquivos.
+
+
+*Como funciona?*
+
+O protocolo FTP trabalha através da arquitetura cliente-servidor e atua nas portas 20 e 21 onde:
+- A porta 21 é utilizada para estabelecer e manter a comunicação entre o cliente e o servidor.
+- A porta 20 é utilizada para a transferência dos dados (arquivos).
+
+Para transferência de arquivos pelo FTP o cliente realiza uma conexão com o servidor pela porta 21. Posteriormente, para cada arquivo transferido uma nova conexão é realizada.
+ 
+
+=== FTP: Considerações Iniciais
+
+*Instalação*
+Para instalação do servidor execute o comando a seguir:
+
+[source, bash]
+----
+$ sudo apt-get install proftpd
+----
+
+No netkit o proftpd já vem instalado por padrão.
+
+Iniciar, parar e reiniciar o servidor:
+
+[source, bash]
+----
+$ /etec/init.d/proftpd start
+$ /etec/init.d/proftpd stop
+$ /etec/init.d/proftpd restart
+----
+
+*Arquivos de configuração*
+
+Os arquivos de configuração e log do servidor FTP localizam-se em:
+
+[source,bash]
+----
+/etc/proftpd/proftpd.conf
+----
+
+*Arquivos de Log*
+
+[source,bash]
+----
+/var/log/proftpd/xferlog <1>
+/var/log/proftpd/proftpd.log <2>
+/var/log/proftpd/controls.log <3>
+----
+
+<1> Transfer Log
+<2> System Log
+<3> Controls Log
+
+*Diretórios Importantes*
+
+[source,bash]
+----
+/etc/ftpusers <1>
+/etc/home <2>
+/etc/ftp <3>
+----
+
+<1> Contém nomes de usuários que não podem acessar o servidor FTP
+<2> Diretório para acesso ao servidor FTP onde são disponibilizados os arquivos para acesso do usuário
+<3> Diretório para acesso ao servidor FTP para acesso anônimo.
+
+=== Configurações Iniciais
+
+Imagine no seguinte contexto: Iremos criar um usuário em nosso servidor FTP. Através do login e senha desse usuário poderemos fazer acesso ao nosso servidor através do protocolo FTP e enviar e receber arquivos.
+
+No servidor, execute o seguinte comando para criar um novo usuário:
+
+[source,bash]
+----
+$ adduser taopaipai
+----
+
+.Tao Pai Pai
+image::imagens/{cap}/taopaipai.png[taopaipai,100]
+
+Dentro do diretório do usuário, criaremos um diretório e dentro deste colocaremos um arquivo de teste.
+
+[source,bash]
+----
+cd /home/taopaipai
+mkdir aulaFTP
+cd aulaFTP
+echo Vamos procurar as esferas do dragão > shenlong.txt
+----
+
+Lembrando que o proftpd já vem instalado por padrão no netkit, vamos apenas inicializar o servidor:
+
+[source,bash]
+----
+$ /etc/init.d/proftpd start
+----
+
+=== Acessando o Servidor
+
+Podemos acessar nosso servidor de várias maneiras: Através do navegador de Internet; Através do Navagador de Arquivos; Através do Terminal ou Através de algum aplicativo para acesso ao FTP como o FileZilla por exemplo. Para todas as opções será solicitado autenticação do usuário. Basta utilizar os dados do usuário criado.
+
+*Acessando o Servidor pelo Navegador de Internet*
+
+Para essa forma de acesso, basta abrir o navegador de internet de sua preferência (no computador anfitrião) e, na barra de enderesços, digitar:
+
+[source,bash]
+----
+ftp://ip_do_servidor
+----
+Essa forma de acesso é prática e últil para o download de informações do lado do cliente.
+
+.Acesso ao servidor FTP através do Navegador
+image::imagens/{cap}/02.png[navegador]
+
+Ao inserir o usuário e a senha, poderemos ter acesso aos arquivos e diretórios do nosso usuário em questão através do navegador.
+
+.Acesso ao servidor FTP através do Navegador
+image::imagens/{cap}/03.png[navegador]
+
+É possível navegar e fazer download dos arquivos.
+
+*Acessando o Servidor pelo Navegador de Arquivos*
+
+Abra o navegador de arquivos e tecle *ctrl + L* para abrir a barra de navegação de arquivos na parte superior. Insira o endereço do servidor:
+
+[source,bash]
+----
+ftp://ip_do_servidor
+----
+
+.Acesso ao servidor FTP através do Navegador de Arquivos
+image::imagens/{cap}/04.png[arquivos]
+
+Através do navegador de arquivos é possível, caso tenha permissões, fazer upload e download dos arquivos do servidor.
+
+.Possibilidade de Download e Upload via Navegador de Arquivos
+image::imagens/{cap}/05.png[arquivos]
+
+*Acessando o Servidor pelo Navegador do FileZilla*
+
+O FileZilla é um aplicativo gratuito que permite a conexão e manipulação de arquivos através do protocolo FTP. O aplicativo fornece interface amigável e praticidade para upload e download de arquivos. Para utilização do aplicativo, basta fornecer o endereço do servidor, nome do usuário,
+senha e porta para conexão (21).
+
+
+.FileZilla
+image::imagens/{cap}/06.png[arquivos]
+
+Note algumas marcações na imagem que representa o acesso através do FileZilla onde:
+
+. Local onde deve-se inserir os dados de acesso ao servidor.
+. Aba de navegação de arquivos do computador local.
+. Aba de navegação de arquivos do computador remoto (servidor FTP).
+
+Ao estabelecer a conexão podemos arrastar arquivos entre as intervaces de navegação para realização de download ou upload.
+
+*Acessando o servidor pelo Terminal*
+
+Para acessar o servidor através do terminal basta, em um computador cliente, através do terminal inserir o comando:
+
+[source,bash]
+----
+$ ftp 10.1.1.1
+----
+
+.Acesso via terminal
+image::imagens/{cap}/07.png[terminal]
+
+
+=== Problematização
+
+Crie um laboratório e configure o servidor FTP. No servidor crie três usuários e dentro de cada diretório de cada usuário crie um arquivo de texto com conteúdos diferentes. Faça acesso ao servidor FTP com os usuários da seguinte maneira:
+
+. Usuário 1 deverá acessar o servidor através do navegador de internet
+. Usuário 2 deverá acessar o servidor através do navegador de arquivos
+. Usuário 3 deverá acessar o servidor através do FileZilla
+
+// Sempre terminar o arquivo com uma nova linha.
+

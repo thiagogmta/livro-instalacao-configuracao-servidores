@@ -1,0 +1,117 @@
+== Servidores DHCP e DNS
+Prof. Thiago Guimarães Tavares - thiagogmta@gmail.com
+IFTO Campus Palmas
+
+.Objetivos do capítulo
+____________________
+Ao final deste capítulo você deverá ser capaz de:
+
+* Entender o que é e para que serve um servidor DHCP.
+* Ser capaz de realizar a configuração de um servidor DHCP simples.
+* Realizar o vinculo de Endereços MACs a determinados endereços IP's através do servidor DHCP.
+____________________
+
+=== Apresentação deste material
+
+Este guia apresenta informações sobre como realizar a configuração básica de dois serviços muito utilizado em redes de computadores. São os protocolos DHCP e DNS. O protocolo DHCP atua recebendo solicitações de endereços Ips advindos de outros hosts na rede. Já o servidor DNS atua realizando a conversão de nomes em endereços Ip's e vice-versa. Esses dois serviços (DHCP e DNS) podem ser configurados separamente ou podem atuar em conjunto através do serviço DDNS que também será abordado.
+O guia está organizado em dois capítulos cada um abordando um serviço com exemplos práticos de configuração e trexos de arquivos de configuração.
+
+== Dynamic Host Configuration Protocol (DHCP)
+
+*O que é?*
+ 
+A sigla *DHCP* representa Dynamic Host Configuration Protocol ou Protocolo de Configuração de Host Dinâmico. O DHCP é responsável pela distribuição de endereços Ips (e outras informações)
+aos hosts da rede (MORIMOTO, 2013).
+
+*Para que serve?*
+
+O DHCP automatiza a configuração da rede e, de acordo com sua configuração, otimiza a utilização de endereços Ips, destinando apenas à quantidade de hosts necessários. Quando um novo host é
+adicionado na rede, este solicita ao DHCP um endereço IP válido. O DHCP ao responder a solicitação entrega um endereço apropriado e outras informações como máscara e gateway e DNS (MORIMOTO, 2013).
+
+*Como funciona?*
+
+A estação de trabalho faz uma requisição em broadcast perguntando se existe alguém que possa lhe atribuir um endereço válido. O servidor DHCP por sua vez responde às solicitações vindas pela rede (atribuidas a ele) fornecendo um IP válido e demais configurações necessárias. A resposta do srevidor DHCP é feita via broadcast endereçada ao IP 255.255.255.255 e é retransmitida pelo switch a todos os hosts (MORIMOTO, 2013).
+De tempos em tempos o servidor DHCP verifica se os endereços IPs atribuidos ainda estão em uso, evitando o desperdício de endereços (MORIMOTO, 2013).
+
+=== DHCP: Instalação e Configuração
+
+==== Instalando, comandos e arquivos
+
+Nas distribuições linux baseadas em debian podemos instalar o pacote _dhcp3-server_ correspondente ao DHCP via apt-get.
+Para a instalação do serviço utilize o seguinte comando:
+
+[source, bash]
+----
+$ apt-get install dhcp3-server
+----
+
+Para iniciar, parar ou reiniciar o serviço utilize respectivamente:
+
+[source, bash]
+----
+$ /etc/init.d/dhcp3-server start
+$ /etc/init.d/dhcp3-server stop
+$ /etc/init.d/dhcp3-server restart
+----
+
+O arquivo de configuração do servidor DHCP encontra-se em:
+
+[source, bash]
+----
+/etc/dhcp3/dhcpd.conf
+----
+
+
+==== Configurações Iniciais
+
+
+
+=== DHCP: Destinando Ip fixo à um host
+
+Teste
+
+=== DHCP: Problematização
+
+NOTE: Para o desenvolvimento deste material foi utilizado como base o linux Ubuntu (seguem os mesmos procedimentos
+para Debian). Dessa maneira foi necessário a instalação do pacote _bind9_. Caso esteja utilizando
+outra distribuição busque como realizar a instalação do pacote bind (ou equivalente) em sua distribuição.
+
+== Domain Name System (DNS)
+
+*O que é?*
+ 
+*DNS* é a sigla para _Domain Name Server_ ou Servidor de Nome de Domínio e pode ser comparado a uma base de dados. Esses servidores tem a função de receber requisições para resolução de nomes de domínios e retornar com os endereços IP's. Ao digitar em seu navegador de Internet o endereço www.google.com.br é feita uma requisição ao servidor DNS em busca do endereço do servidor que hospeda o site citado. O servidor DNS por sua vez verifica em sua base de dados se aquele endereço é conhecido. Em caso positivo o servidor retorna ao cliente a resposta de sua requisição. Em caso negativo o servidor encaminha essa solicitação à um servidor DNS superior.
+
+*Para que serve?*
+
+Quando você visita um site através do seu navegador e digita seu endereço como por exemplo www.google.com.br é feita uma solicitação de acesso aos servidores que hospedam aquele website. Entretanto, o nome do website é uma forma de representação do endereço correspondente a sua hospedagem. A informação da localização destes servidores está em um servidor chamado DNS. Ou seja, a cada solicitação de acesso feita pelo navegador de internet é necessário a conversão do nome www.google.com.br para o endereço IP do servidor que o hospeda.
+
+*Como funciona?*
+
+Quando você visita um site através do seu navegador e digita seu endereço como por exemplo www.google.com.br é feita uma solicitação de acesso aos servidores que hospedam aquele website. Entretanto, o nome do website é uma forma de representação do endereço correspondente a sua hospedagem. A informação da localização destes servidores está em um servidor chamado DNS. Ou seja, a cada solicitação de acesso feita pelo navegador de internet é necessário a conversão do nome www.google.com.br para o endereço IP do servidor que o hospeda.
+
+=== DNS: Instalação e configuração
+
+Teste
+
+=== DNS: Servidor DNS secundário
+
+Teste
+
+=== DNS: Servidor DNS Dinâmico
+
+Teste
+
+=== DNS: Problematização DDNS
+
+Teste
+
+
+
+[source,bash]
+----
+# sudo apt-get install bind9
+----
+
+<1> Instalação do bacote
+

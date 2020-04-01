@@ -1,0 +1,94 @@
+[preface]
+== Saudações
+
+Este livro foi escrito com o objetivo de servir de base para o estudo e prática de configuração de servidores Linux. Observando o impasse da necessidade de infraestrutura física para o estudo da disciplina de Redes e suas derivações, como a configuração de Servidores, algumas ferramentas foram projetadas de forma a simular o ambiente físico. Uma dessas ferramentas é o *Netkit*. Essa ferramenta permite criarmos redes virtuais de computadores com a virtualização de hosts que consomem pouquissímos recursos do computador hospedeiro. Dessa forma podemos não só simular diversas topologias de redes como tambem realizar a configuração de serviços e servidores linux.
+
+Você vai encontrar nesse material um guia prático que irá lhe nortear em relação a configuração de alguns serviços em servidores linux utilizando como base o ambiente de testes Netkit. A pesar do processo ser realizado em um ambiente de testes o processo de instalação e configuração dos serviços utilizando o Netkit como meio ocorre tal como seria em um computador real. Justifica-se a utilização da ferramenta:
+
+* Possibilidade de configuração de serviços em um ambiente de testes controlado.
+* Baixo investimento em infraestrutura (nesse contexto apenas um computador real é necessário para simular uma rede complexa com computadores, roteadores e servidores).
+* Diversidade de possibilidades de testes.
+
+=== Como este livro está organizado
+
+
+O primeiro capítulo do livro aborda a ferramenta Netkit que será utilizada. Nesse capítulo será apresentada a instalação, configuração e utilização básica da ferramenta como: Criação de uma rede ponto a ponto; Configuração de um laboratório de redes; Compartilhamento de acesso a internet entre um host e seus clientes; Compartilhamento de arquivos entre o host anfitrião e seus hospedeiros; Modificação do pacote de aplicativos que compõem o Netkit.
+Os demais capítulos abordam a instalação e configuração dos respectivos serviços: DHCP; DNS; DDNS; Apache; FTP; Samba; Proxy e Firewall.
+
+*A cada nova abordagem este guia encontra-se organizado da seguinte maneira:*
+
+. Apresentação
+** Abordagem geral sobre o assunto respondendo inicialmente três questionamentos:
+*** O que é? 
+*** Para que serve?
+*** Como Funciona?
+. Exemplificação
+** Redação do processo de instalação e configuração do serviço em questão. Essa sessão está organizada em capítulos que variam em quantidade e extensão de acordo com o tópico abordado.
+. Problematização
+** Apresentação de alguma problematização a ser resolvida com objetivo na aplicação e fixação do conhecimento obtido. As problematizações estão inseridos ao final de capítulos chaves durante a exemplificação.
+
+=== Caixas de diálogo
+
+No decorrer deste livro você poderá encontrar caixas de diálogo precedidas de ícones específicos. Confira o significado de cada uma delas:
+
+// NOTE: Chama atenção para informação auxiliar.
+// TIP: Dica...
+// IMPORATNT: Não esqueça...
+// WARNING: Atente para...
+// CAUTION: Assegure-se de que...
+
+[NOTE]
+========
+Essa marcação representa algum complemento de informação. Chama atenção para alguma informação auxiliar.
+========
+
+[TIP]
+========
+Essa marcação apresenta alguma dica!
+========
+
+[IMPORTANT]
+========
+Essa marcação é utilizada para chamar atenção a uma informação importante para que não se esqueça.
+========
+
+[CAUTION]
+========
+Essa marcação é um aviso para que tenha cautela ou se atente para algo.
+========
+
+[WARNING]
+========
+Essa marcação lhe chama atenção para que tenha cuidado, provavelmente para que se asseguro de algo.
+========
+
+=== Códigos e comandos
+
+Sempre que for necessário a execução de um comando no terminal esses comando serão apresentados em destaque e precedidos por _$_. Sempre que necessário, as linhas de comando serão marcadas por números e a respectiva descrição daquela instrução como exibido a seguir: 
+
+[source, bash]
+----
+$ mkdir pasta <1>
+$ cd pasta <2>
+----
+<1> Comando para criar um diretório
+<2> Comando para acessar o diretório criado
+
+
+=== Como sugiro que você utilize este livro
+
+* Procure compreender a definição abordada na *Apresentação* de cada capítulo. Inevitavelmente é frustrante realizar amguma tarefa sem compreender qual seu objetivo.
+* Leia atentamente todo o conteúdo apresentado na *Exemplificação* e só após tente, passo a passo, realizar as configurações. Algumas implementações exigem a compreenção todal da aplicação antes de sua implantação para sua execução eficaz.
+* Procure solucionar as *Problematizações* propostas pois irão exercitar sua capacidade de solução de problemas e fixar os conhecimentos adquiridos.
+* Por fim, busque documentar seu progresso e compartilhar seu conhecimento. Salve cuidadosamente cada laboratório que fizer pois servirá de material para estudo. Procure compartilhar o que aprendeu. Ao ensinar você irá aprender mais ainda.
+
+=== Sobre o Autor
+*Thiago Guimarães Tavares* é professor do Instituto Federal de Ciências e Tecnologia, _Campus_ Palmas - TO. Mestre em Engenharia de Produção e Sistemas pela UNISINOS. Especialista em Redes de Computadores pela ESAB. Graduado em Redes de Computadores pelo CEULP/ULBRA.
+
+Espero que este livro seja útil para seu processo de ensino ou aprendizagem. Você pode me encontrar em:
+
+* Pessoal: thiagogmta@gmail.com
+
+* Profissional: thiagogmta@ifto.edu.br
+
+// Sempre manter uma linha em branco no final

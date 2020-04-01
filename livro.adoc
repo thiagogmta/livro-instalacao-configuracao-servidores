@@ -1,0 +1,62 @@
+= Instalação e Configuração de Serviços
+Prof. Thiago Guimarães Tavares - thiagogmta@gmail.com - IFTO Campus Palmas
+
+//Instrução para exibição dos ícones
+++++
+<link rel="stylesheet"  href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.1.0/css/font-awesome.min.css">
+++++
+
+//Tipo do documento (article, book or manpage)
+:doctype: book
+
+:chapter-label:
+
+//autor do documento
+:author: Thiago Guimarães Tavares
+:email: thiagogmta@gmail.com
+
+//adiciona índice
+:toc2:
+:toc-title: Sumário
+:figure-caption: Figura
+
+// adiciona numeração nos capítulos
+:sectnums:
+
+//destaca sintaxe de código
+:source-highlighter: highlightjs
+
+//insere ícones no lugar dos "Admonition":
+// NOTE: Chama atenção para informação auxiliar.
+// TIP: Dica...
+// IMPORATNT: Não esqueça...
+// WARNING: Atente para...
+// CAUTION: Assegure-se de que...
+:icons: font
+
+//linguagem do documento
+:lang: pt-BR
+
+//palavras chaves do documento
+:keywords: Computação, Linux, Instalação e Configuração
+
+//descrição do documento
+//:description: Instalação e Configuração de Serviços
+
+//repositório do projeto
+:gitrepo: https://github.com/thiagogmta/ICS
+
+// #---- Inclusão dos capítulos no Documento ----# //
+
+// include::capitulos/shared-prefacio.adoc[]
+
+include::cap0-prefacio.adoc[]
+include::cap1-netkit.adoc[]
+include::cap2-dhcp.adoc[]
+include::cap3-dns.adoc[]
+include::cap4-ddns.adoc[]
+include::cap5-apache.adoc[]
+//include::capx-teste.adoc[]
+
+//Sempre termine os arquivos com uma linha em branco.
+

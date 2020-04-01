@@ -1,0 +1,334 @@
+:toc-title: Sumário
+:figure-caption: Figura
+:numbered:
+:source-highlighter: highlightjs
+
+== Dynamic Host Configuration Protocol (DHCP)
+Prof. Thiago Guimarães Tavares - thiagogmta@gmail.com
+IFTO Campus Palmas
+
+:cap: cap2-dhcp
+
+.Objetivos do capítulo
+____________________
+Ao final deste capítulo você deverá ser capaz de:
+
+* Entender o que é e para que serve um servidor DHCP.
+* Ser capaz de realizar a configuração de um servidor DHCP simples.
+* Realizar o vinculo de Endereços MACs a determinados endereços IP's através do servidor DHCP.
+____________________
+
+=== Apresentação: DHCP
+
+==== O que é?
+ 
+A sigla *DHCP* representa Dynamic Host Configuration Protocol ou Protocolo de Configuração de Host Dinâmico. O DHCP é responsável pela distribuição de endereços Ips (e outras informações)
+aos hosts da rede (MORIMOTO, 2013).
+
+==== Para que serve?
+
+O DHCP automatiza a configuração da rede e, de acordo com sua configuração, otimiza a utilização de endereços Ips, destinando apenas à quantidade de hosts necessários. Quando um novo host é adicionado na rede este host solicita ao DHCP um endereço IP válido. O DHCP ao responder a solicitação entrega um endereço apropriado e outras informações como máscara, gateway e DNS (MORIMOTO, 2013).
+
+==== Como funciona?
+
+A estação de trabalho faz uma requisição em broadcast perguntando se existe alguém que possa lhe atribuir um endereço válido. O servidor DHCP por sua vez responde às solicitações vindas pela rede (atribuidas a ele) fornecendo um IP válido e demais configurações necessárias. A resposta do srevidor DHCP é feita via broadcast endereçada ao IP 255.255.255.255 e é retransmitida pelo switch a todos os hosts (MORIMOTO, 2013).
+
+De tempos em tempos o servidor DHCP verifica se os endereços IPs atribuidos ainda estão em uso, evitando o desperdício de endereços (MORIMOTO, 2013).
+
+=== DHCP: Exemplificação
+
+==== Criação do Ambiente
+
+Leve em consideração que nosso ambiente tem a seguinte topologia implementada através do
+netkit:
+
+[#img-diagrama01] 
+.Laboratório 01
+image::imagens/{cap}/diagrama01.png[diagrama01]
+
+===== Etapa 1: Criando Arquivos e Diretórios
+
+Primeiro passo iremos criar os arquivos e diretórios necessários. Crie um diretório chamado *lab* para que você possa guardar os seus laboratórios. Os procedimentos logo a baixo partem de um diretório lab previamente criado.
+
+[source, bash]
+----
+$ mkdir dhcp
+$ cd dhcp
+$ mkdir pc1 pc2 pc3 pc4
+$ touch lab.conf pc1.startup pc2.startup pc3.startup pc4.startup
+----
+
+===== Etapa 2: Configurando Topologia
+
+Iremos configurar a topologia do laboratório através do arquivo lab.conf. Para tanto insira o seguinte conteúdo no arquivo:
+
+[source, bash]
+----
+#lab.conf
+pc1[0]=tap,192.168.10.1,192.168.10.2
+pc1[1]=switch
+pc2[0]=switch
+pc3[0]=switch
+pc4[0]=switch
+----
+
+Configurações feitas, inicie o laboratório com o comando:
+
+[source,bash]
+----
+$ lstart
+----
+
+[#lstart] 
+.Iniciando o Laboratório
+image::imagens/{cap}/01.png[lstart]
+
+Os quatro hosts virtuais serão inicializados.
+
+[#lab-dhcp] 
+.Laboratório DHCP Iniciado
+image::imagens/{cap}/02.png[lab-dhcp]
+
+==== Configuração do Servidor DHCP
+
+Nas distribuições linux baseadas em debian podemos instalar o pacote _isc-dhcp-server_ correspondente ao DHCP via apt-get.
+Para a instalação do serviço utilize o seguinte comando:
+
+[source, bash]
+----
+$ apt-get install isc-dhcp-server
+----
+
+*Obs.:* Por padrão o isc-dhcp já vem instalado no netkit
+
+Para iniciar, parar ou reiniciar o serviço utilize respectivamente:
+
+[source, bash]
+----
+$ /etc/init.d/isc-dhcp-server start
+$ /etc/init.d/isc-dhcp-server stop
+$ /etc/init.d/isc-dhcp-server restart
+----
+
+O arquivo de configuração do servidor DHCP encontra-se em:
+
+[source, bash]
+----
+/etc/dhcp/dhcpd.conf
+----
+
+===== Etapa 1: Configurando interface de rede do Servidor
+
+Nosso servidor DHCP necessita de um IP fixo para funcionamento. Tomaremos como parâmetro o endereço ip 10.1.1.1 para nosso servidor conforme nosso diagrama de rede. No terminal do host pc1 (nosso servidor) execute:
+
+[source, bash]
+----
+$ ifconfig eth1 10.1.1.1/29
+----
+
+===== Etapa 2: Editando o arquivo de configuração do DHCP
+
+O arquivo de configuração padrão do dhcp contem várias instruções e comentários. Iremos fazer o backup do arquivo original e criar um novo arquivo apenas com as configurações necessárias. Execute os comandos a seguir no servidor dhcp.
+
+[source, bash]
+----
+#pc1
+$ cd /etc/dhcp
+$ cp dhcpd.conf dhcpd.conf.bk
+$ echo > dhcpd.conf
+----
+
+Insira o seguinte conteúdo no arquivo dhcpd.conf
+
+[source, bash]
+----
+#/etc/dhcp/dhcpd.conf
+ddns-update-style none;
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+subnet 10.1.1.0 netmask 255.255.255.248 {
+    range 10.1.1.3 10.1.1.6;
+    option subnet-mask 255.255.255.248;
+    option routers 10.1.1.1;
+    option domain-name-servers 8.8.8.8;
+    option broadcast-address 10.1.1.7;
+}
+----
+
+Detalhamento da Configuração
+
+|===
+| Default-lease-time 600 | Informa que o servidor dhcp irá verificar a dada 600 segundos (10
+minutos) se as estações estão ativas.
+|Max-lease-time 7200|Determina o temo máximo que um host pode ficar com um endereço
+|Subnet|Informa o endereço da rede e sua máscara e dentro de seu bloco são
+inseridas as configurações para distribuição de endereços.
+|Range|Determina a faixa de endereços IPs que serão distribuidos pelo
+servidor
+|Option subnet-mask|Define a mascara padrão da rede
+|Option routers|Define o endereço do gatway padrão
+|Option domain-name-server|Contem os endereços dos servidores DNS. Ao utilizar dois endereços
+deve-se separá-los por vírgula.
+|Option broadcas-address|O endereço de broadcast da rede
+|===
+
+*> Interfaces* 
+
+Como nosso servidor possui duas interfaces de rede precisamos informar ao servidor qual das duas interfaces irá responder às solicitações de endereçamento IP. Para isso devemos editar o arquivo _/etc/default/isc-dhcp-server_. Dentro dessa linha alterar o parâmetro INTERFACES e informar a interface desejada fincando dessa maneira:
+
+[source, bash]
+----
+#/etc/default/isc-dhcp-server
+INTERFACES="eth1"
+----
+
+Salve e feche o arquivo.
+
+===== Etapa 3: Iniciando o Servidor
+
+Configurações realizadas é hora de iniciar o servidor dhcp. Execute o comando:
+
+[source, bash]
+----
+$ /etc/init.d/isc-dhcp-server start
+----
+
+Caso ocorra algum erro de configuração será apresentado o erro e sua linha no arquivo de configuração nesse etapa. Caso o erro não seja decorrente do arquivo de configuração pode ser apresentada a seguinte janela:
+
+[#erro-dhcp] 
+.Laboratório DHCP Iniciado
+image::imagens/{cap}/03.png[erro-dhcp]
+
+Para esses casos deve-se verificar o arquivo syslog.
+
+[source, bash]
+----
+$ cat /var/log/syslog
+----
+
+Entretanto, em teoria, seu laboratório deve funcionar perfeitamente apresentando a seguinte janela:
+
+[#ok-dhcp] 
+.ISC DHCP OK
+image::imagens/{cap}/04.png[ok-dhcp]
+
+===== Etapa 4: Hosts Clientes
+
+Com o servidor DHCP configurado os clientes já podem solicitar seus endereços IP. Para tanto execute o seguinte comando nos hosts clientes (pc2, pc3 e pc4):
+
+[source,bash]
+----
+dhclient eth0
+----
+
+[#clientes-dhcp] 
+.Distribuição de Endereços
+image::imagens/{cap}/05.png[clientes-dhcp]
+
+Seu laboratório está com o servidor DHCP está pronto. Para validar as configurações realize testes de ping entre os hosts. 
+
+==== Fixando configurações no laboratório
+
+Existe um pequeno impasse em relação ao funcionamento do laboratório. Quando o lab for finalizado com _lcrash_ as configurações serão perdidas. Ao iniciar o laboratório novamente com _lstart_ o laboratório será iniciado sem as configurações. Podemos realizar configurações nos diretórios dos hosts e nos arquivos .startup de forma que quando o laboratório seja iniciado as configurações já estejam presentes. Finalize seu laboratório atual e vamos aos procedimentos.
+
+===== Etapa 1: Criando arquivos de configuração
+
+Cada diretório de cada host virtual (pc1, pc2, pc3 e pc4) simboliza o ponto de montagem */* dentro do terminal virtual daquele host. Ou seja, é possível criar uma estrutura de diretórios dentro do diretório do pc1 por exemplo e essa estrutura será apresentada no terminal do host pc1 partindo do diretório */*.
+
+Para o funcionamento do servidor DHCP é necessário a edição de seu arquivo de configuração e do arquivo que indica a interface de rede que irá responder às requisições. Criaremos dois arquivo de configuração dentro do diretório do pc1, um referente ao servidor DHCP e o outro referente a interface de rede para que ambos apareçam dentro do host virtual. Os procedimentos a seguir devem ser executados no terminal do *host real*. Leve em consideração que deve-se estar dentro do diretório onde se encontram os arquivos do laboratório (lab/dhcp):
+
+[source,bash]
+----
+$ cd pc1
+$ mkdir -p etc/dhcp
+$ touch etc/dhcp/dhcpd.conf
+----
+
+Dentro do arquivo dhcpd.conf que foi criado insira o conteúdo do arquivo de configuração do servidor DHCP:
+
+[source, bash]
+----
+#etc/dhcp/dhcpd.conf
+ddns-update-style none;
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+subnet 10.1.1.0 netmask 255.255.255.248 {
+    range 10.1.1.3 10.1.1.6;
+    option subnet-mask 255.255.255.248;
+    option routers 10.1.1.1;
+    option domain-name-servers 8.8.8.8;
+    option broadcast-address 10.1.1.7;
+}
+----
+
+Ainda dentro do diretório do pc1 iremos criar o arquivo responsável por informar a interface de rede que deve responder às requisições DHCP.
+
+[source,bash]
+----
+$ mkdir etc/default
+$ touch etc/default/isc-dhcp-server
+----
+
+Dentro do arquivo isc-dhcp-server insira a seguinte instrução:
+
+[source,bash]
+----
+#etc/default/isc-dhcp-server
+INTERFACES="eth1"
+----
+
+Ao iniciar o laboratório esses dois arquivos criados tomarão o lugar dos arquivos originais. Caso seja necessário alterar alguma configuração no arquivo de configuração do servidor, realize essa configuração no arquivo que foi criado nesta sessão para que quando o laboratório for inicializado as instruções já estejam presentes.
+
+===== Etapa 2: Conifgurando hosts
+
+O servidor DHCP deve iniciar o serviço e os hosts clientes devem solicitar um endereço ao servidor assim que o lab for iniciado. Podemos inserir comandos nos arquivos .startup para que essas ações sejam executadas. Seguem as configurações de cada arquivo:
+
+[source,bash]
+----
+#pc1.startup
+ifconfig eth1 10.1.1.1/29
+/etc/init.d/isc-dhcp-server start
+----
+
+[source,bash]
+----
+#pc2.startup
+dhclient eth0
+----
+
+[source,bash]
+----
+#pc3.startup
+dhclient eth0
+----
+
+[source,bash]
+----
+#pc4.startup
+dhclient eth0
+----
+
+Pronto basta iniciar o laboratório e todas as configurações já etarão presentes. Os quatro hosts do seu laboratório devem iniciar, o servidor já deve startar o serviço DHCP e os três clientes devem receber endereços IP's do servidor.
+
+=== Problematização
+
+. Configure o seu servidor DHCP de forma a atribuir os seguintes endereços:
+    
+    Faixa de endereço IP de 10.1.1.10 a 10.1.1.62
+    Máscara /26
+    Gateway: Endereço IP do servidor DHCP
+    DNS: 8.8.8.8, 8.8.4.4
+
+. Adicione mais um host : pc5
+
+. Encerre o laboratório com lcrash e certifique-se de que todos os arquivos .disk foram excluídos.
+
+. Envie na plataforma seu laboratório (não compacte)!
+
+* *Obs1:* Para fins de avaliação o laboratório deve estar totalmente funcional ao ser iniciado com lstart no computador do professor.
+* *Obs2:* Laboratórios que estiverem com os arquivos .disk ou que estiverem compactados, não serão corrigidos!
+ 
+Envie na plataforma 
+
